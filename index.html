@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<head>
+	<meta http-equiv="content-type" content="text/html" charset="UTF-8">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+
+	<style>
+		html, body {
+			text-align: center;
+			font-family: 'Roboto', sans-serif;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		ul {
+			list-style: none;
+		}
+
+		.listDiv {
+		
+			position: fixed;
+			display: none;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background-color: white;
+			z-index: 2;
+			list-style: none;
+			padding-left: 0;
+			overflow: hidden;
+			overflow-y: scroll;
+		}
+
+		.songlist button {
+			background: none;
+			border: none;
+			padding: 0;
+			cursor: pointer;
+			outline: none;
+			font-size: large;
+		}
+
+		.songlist button:hover {
+			color: blue;
+		}
+
+	</style>
+	
+	
+    <script>
+    	let songObjects = new Array();
+		let currentSong = 0;
+		
+        function setSong(songNmb) {
+        	
+			const url = new URL(window.location);
+			url.searchParams.set('id', songNmb);
+			window.history.pushState({}, '', url);
+			
+        	currentSong = songNmb;
+        	
+        	let gettedURL = "../assets/json/".concat(songNmb, ".json");
+
+	            fetch(gettedURL)
+	            .then(response => response.json())
+	            .then(data => {
+	            console.log(data);
+	            document.getElementsByClassName("songtext")[0].innerHTML = data.lyrics.replace(/(?:\r\n|\r|\n)/g, '<br>');
+	            document.getElementsByClassName("title")[0].innerHTML = data.name;
+	            document.getElementsByClassName("category")[0].innerHTML = "Kategoria: ".concat(data.categories[0].name);
+	            	
+	            if (data.melody || data.melody === "") {
+	            	document.getElementsByClassName("melody")[0].innerHTML = "Melodia: ".concat(data.melody);
+	            }
+	            else {
+	            	document.getElementsByClassName("melody")[0].innerHTML = "";
+	            }
+
+	            if (data.example || data.example === "") {
+	            	document.getElementsByClassName("example")[0].innerHTML = "Esimerkki: ".concat(data.example);
+	            }
+	            else {
+	            	document.getElementsByClassName("example")[0].innerHTML = "";
+	        	}
+	        	setInvisible();
+	        });
+        }
+
+		function makeList() {
+			let listURL = "../assets/json/all-songs.json";
+			fetch(listURL)
+			.then(response => response.json())
+			.then (data => {
+				let list = document.getElementsByClassName("songlist")[0];
+				data.forEach(function (datum) {
+					let li = document.createElement('li');
+					list.appendChild(li);
+					li.innerHTML += "<button onclick='setSong(".concat(datum.songID, ")'>", datum.songName, "</button>");
+					
+				})
+			})
+		}
+        
+        
+        function start() {
+        	const queryString = window.location.search;
+        	const urlParams = new URLSearchParams(queryString);
+        	if (urlParams.has('id')) {
+        		setSong(parseInt(urlParams.get('id')));
+        	}
+        	else {
+        		setSong(Math.floor(Math.random()*590));
+        	}
+        	makeList();
+        }
+
+		/*
+		function nameObjects() {
+			for (let i = 0; i <= 590; i++) {
+				let gettedURL = "../assets/json/".concat(i, ".json");
+				fetch(gettedURL)
+				.then(response => response.json())
+				.then(data => {
+					let id = data.song_id;
+					let name = data.name;
+					songObjects.push({"songID": id, "songName": name});
+					
+				})
+			}
+			console.log(songObjects);
+		}
+		*/
+
+        function setVisible() {
+        	let listDiv = document.getElementsByClassName("listDiv")[0];
+        	listDiv.style.display = "block";
+        	document.getElementsByClassName("songDiv")[0].style.display = "none";
+        }
+
+        function setInvisible() {
+        	document.getElementsByClassName("songDiv")[0].style.display = "block";
+        	document.getElementsByClassName("listDiv")[0].style.display = "none";
+        }
+
+        function searchSongs() {
+        	var input, filter, ul, li, a, i, textValue;
+        	input = document.getElementById('searchInput');
+        	filter = input.value.toUpperCase();
+        	ul = document.getElementsByClassName("songlist")[0];
+        	li = ul.getElementsByTagName('li');
+        	for (i = 0; i < li.length; i++) {
+        		a = li[i].getElementsByTagName("button")[0];
+        		textValue = a.textContent || a.innerText;
+        		if (textValue.toUpperCase().indexOf(filter) > -1) {
+        			li[i].style.display = "";
+        		}
+        		else {
+        			li[i].style.display = "none";
+        		}
+        	}
+        }
+        
+        window.onload = start;
+        
+    </script>
+    
+</head>
+<body>
+	<div class=pageBody>
+
+	    <div class="listDiv">
+	    	<br>
+	    	<button onclick="setInvisible()">Piilota laululista</button>
+	    	<input type="text" id="searchInput" onkeyup="searchSongs()" placeholder="etsi laulua">
+	    	<ul class="songlist"> </ul>
+	    </div>   
+
+	    <div class="songDiv">
+			<br>
+		    <button onclick="setSong(currentSong - 1)">Edellinen</button>
+		    <button onclick="setVisible()">Näytä laululista</button>
+		    <button onclick="setSong(currentSong + 1)">Seuraava</button>
+		    <br>
+		    <h1 class="title">otsikko</h1>
+		    <p class="songtext">laulu</p>
+		    <p class="melody">melodia</p>
+		    <p class="example">esimerkki</p>
+		    <p class="category">kategoria</p>
+	    </div>
+	    <div class="footer"> 
+			<p><i> Huom! Aika iso osa näistä biiseistä on ihan vitun järkkyjä. <br> En ota mitään vastuuta tästä sisällöstä, haluan vaan ettei sitä lakaista maton alle. </i></div>
+	    </div>
+    </div>
+    
+</body>
