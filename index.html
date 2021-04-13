@@ -51,9 +51,11 @@
 	
 	
     <script>
+    
     	let songObjects = new Array();
 		let currentSong = 0;
-		
+
+		// function to set a song and add its data to the page
         function setSong(songNmb) {
         	
 			const url = new URL(window.location);
@@ -62,7 +64,7 @@
 			
         	currentSong = songNmb;
         	
-        	let gettedURL = "../assets/json/".concat(songNmb, ".json");
+        	let gettedURL = `../assets/json/${songNmb}.json`;
 
 	            fetch(gettedURL)
 	            .then(response => response.json())
@@ -70,17 +72,17 @@
 	            console.log(data);
 	            document.getElementsByClassName("songtext")[0].innerHTML = data.lyrics.replace(/(?:\r\n|\r|\n)/g, '<br>');
 	            document.getElementsByClassName("title")[0].innerHTML = data.name;
-	            document.getElementsByClassName("category")[0].innerHTML = "Kategoria: ".concat(data.categories[0].name);
+	            document.getElementsByClassName("category")[0].innerHTML = `Kategoria: ${data.categories[0].name}`;
 	            	
-	            if (data.melody || data.melody === "") {
-	            	document.getElementsByClassName("melody")[0].innerHTML = "Melodia: ".concat(data.melody);
+	            if (data.melody || data.melody !== "") {
+	            	document.getElementsByClassName("melody")[0].innerHTML = `Melodia: ${data.melody}`;
 	            }
 	            else {
 	            	document.getElementsByClassName("melody")[0].innerHTML = "";
 	            }
 
-	            if (data.example || data.example === "") {
-	            	document.getElementsByClassName("example")[0].innerHTML = "Esimerkki: ".concat(data.example);
+	            if (data.example || data.example !== "") {
+	            	document.getElementsByClassName("example")[0].innerHTML = `Esimerkki: ${data.example}` ;
 	            }
 	            else {
 	            	document.getElementsByClassName("example")[0].innerHTML = "";
@@ -89,6 +91,8 @@
 	        });
         }
 
+
+		// function to build list of songs from json
 		function makeList() {
 			let listURL = "../assets/json/all-songs.json";
 			fetch(listURL)
@@ -98,18 +102,18 @@
 				data.forEach(function (datum) {
 					let li = document.createElement('li');
 					list.appendChild(li);
-					li.innerHTML += "<button onclick='setSong(".concat(datum.songID, ")'>", datum.songName, "</button>");
+					li.innerHTML += `<button onclick='setSong(${datum.songID})'>${datum.songName}</button>`
 					
 				})
 			})
 		}
         
-        
+        // initialiser function
         function start() {
         	const queryString = window.location.search;
         	const urlParams = new URLSearchParams(queryString);
         	if (urlParams.has('id')) {
-        		setSong(parseInt(urlParams.get('id')));
+        		setSong(parseInt(urlParams.get('id')), 10);
         	}
         	else {
         		setSong(Math.floor(Math.random()*590));
@@ -117,34 +121,20 @@
         	makeList();
         }
 
-		/*
-		function nameObjects() {
-			for (let i = 0; i <= 590; i++) {
-				let gettedURL = "../assets/json/".concat(i, ".json");
-				fetch(gettedURL)
-				.then(response => response.json())
-				.then(data => {
-					let id = data.song_id;
-					let name = data.name;
-					songObjects.push({"songID": id, "songName": name});
-					
-				})
-			}
-			console.log(songObjects);
-		}
-		*/
-
+		// function to overlay the song list onto the page
         function setVisible() {
         	let listDiv = document.getElementsByClassName("listDiv")[0];
         	listDiv.style.display = "block";
         	document.getElementsByClassName("songDiv")[0].style.display = "none";
         }
 
+		// function to set song list overlay invisible
         function setInvisible() {
         	document.getElementsByClassName("songDiv")[0].style.display = "block";
         	document.getElementsByClassName("listDiv")[0].style.display = "none";
         }
 
+		// function to run to filter input whenever the search box is written into
         function searchSongs() {
         	var input, filter, ul, li, a, i, textValue;
         	input = document.getElementById('searchInput');
@@ -190,6 +180,7 @@
 		    <p class="example">esimerkki</p>
 		    <p class="category">kategoria</p>
 	    </div>
+	    
 	    <div class="footer"> 
 			<p><i> Huom! Aika iso osa näistä biiseistä on ihan vitun järkkyjä. <br> En ota mitään vastuuta tästä sisällöstä, haluan vaan ettei sitä lakaista maton alle. </i></div>
 	    </div>
