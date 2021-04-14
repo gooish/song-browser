@@ -18,9 +18,9 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script:
-          cd /var/www/html/songs
-          git clone https://github.com/gooish/song-browser.git
-          mv song-browser/index.html .
-          rm -rf song-browser
+        script: |
+          cd /var/www/html/songs #
+          git clone https://github.com/gooish/song-browser.git #
+          mv song-browser/index.html . #
+          rm -rf song-browser #
           
