@@ -5,11 +5,25 @@
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
 
 	<style>
+		:root {
+			--main-bg-color: #011638;
+			--inner-bg-color: #2e294e;
+			--main-fg-color: #e8c1c5;
+			--second-fg-color: #d499b9;
+
+		}
+		
+
+
+
+
 		html, body {
 			text-align: center;
 			font-family: 'Roboto', sans-serif;
 			margin: 0px;
 			padding: 0px;
+			background-color: var(--main-bg-color);
+			color: var(--main-fg-color)
 		}
 
 		ul {
@@ -26,12 +40,13 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
-			background-color: wheat;
+			background-color: var(--main-bg-color);
 			z-index: 2;
 			list-style: none;
 			padding-left: 0;
 			overflow: hidden;
 			overflow-y: scroll;
+			padding: 2rem;
 		}
 
 		.songlist button {
@@ -41,10 +56,69 @@
 			cursor: pointer;
 			outline: none;
 			font-size: large;
+
 		}
 
 		.songlist button:hover {
 			color: blue;
+		}
+
+		.pageBody {
+			margin: 2rem;
+			padding: 1rem;
+			background-color: var(--inner-bg-color);
+		}
+
+		.songDiv button {
+			background-color: var(--main-bg-color);
+			border: none;
+			outline: none;
+			color: var(--main-fg-color);
+			padding: 1rem 2rem;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: large;
+			transition-duration: 0.05s;
+			margin: 7px;
+		}
+
+		.songDiv button:hover {
+			background-color: var(--second-fg-color);
+			color: var(--inner-bg-color)
+		}
+
+		#hidelist {
+			background-color: var(--inner-bg-color);
+			border: none;
+			outline: none;
+			color: var(--main-fg-color);
+			padding: 1rem 2rem;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: large;
+			transition-duration: 0.05s;
+			margin: 7px;
+		}
+
+		#hidelist:hover {
+			background-color: var(--second-fg-color);
+			color: var(--inner-bg-color)
+		}
+
+		input[type='text'] {
+			padding: 1rem 2rem;
+			border: none;
+			background-color: var(--second-fg-color);
+			color: var(--inner-bg-color);
+			font-family: 'Roboto', sans-serif;
+			font-size: large;
+			outline: none;
+		}
+
+		input[type='text']::placeholder {
+			color: var(--inner-bg-color);
 		}
 
 	</style>
@@ -160,16 +234,14 @@
 </head>
 <body>
 	<div class=pageBody>
-
 	    <div class="listDiv">
-	    	<br>
-	    	<button onclick="setInvisible()">Piilota laululista</button>
+			<br>
+	    	<button onclick="setInvisible()" id="hidelist">Piilota laululista</button>
 	    	<input type="text" id="searchInput" onkeyup="searchSongs()" placeholder="etsi laulua">
 	    	<ul class="songlist"> </ul>
 	    </div>   
 
 	    <div class="songDiv">
-			<br>
 		    <button onclick="setSong(currentSong - 1)">Edellinen</button>
 		    <button onclick="setVisible()">Näytä laululista</button>
 		    <button onclick="setSong(currentSong + 1)">Seuraava</button>
